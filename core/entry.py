@@ -72,6 +72,35 @@ class LoreEntry(ConfigNode):
             "times": self.times,
         }
 
+    def add_scope(self, scope: str) -> bool:
+        """Add a scope if it does not already exist."""
+        scopes = list(self.scope)
+        if scope in scopes:
+            return False
+
+        scopes.append(scope)
+        self.scope = scopes
+        return True
+
+    def remove_scope(self, scope: str) -> bool:
+        """Remove a scope if it exists."""
+        scopes = list(self.scope)
+        if scope not in scopes:
+            return False
+
+        scopes.remove(scope)
+        self.scope = scopes
+        return True
+
+    def set_keywords(self, keywords: list[str]) -> None:
+        """Replace keywords and rebuild compiled regex patterns."""
+        self.keywords = list(keywords)
+        self._compile_patterns()
+
+    def set_priority(self, priority: int) -> None:
+        """Update entry priority."""
+        self.priority = priority
+
     # ==================================================
     # 编译正则
     # ==================================================

@@ -1,3 +1,10 @@
+## v2.2.6
+
+增强：
+
+* 引入 `add_scope` 和 `remove_scope` 辅助方法，用于在条目上安全地修改 scope。
+* 为 keywords 和 priority 添加 setter，当 keywords 发生变化时，确保内部模式会被重新编译。
+
 ## v2.2.5
 
 重构 lorebook 配置和条目管理，以支持默认 lorebook 加载、基于映射的存储和批量操作，同时使文件路径处理以及上传/导出行为与 AstrBot 核心工具保持一致。
