@@ -66,6 +66,75 @@ class WorldBookPlugin(Star):
         async for msg in self.editor.add_entry(event, name):
             await event.send(msg)
 
+    @filter.llm_tool(name="worldbook_add_entry")
+    async def llm_add_entry(
+        self,
+        event: AstrMessageEvent,
+        name: str,
+        content: str,
+        keywords: str = "",
+    ) -> str:
+        """Add a common worldbook entry.
+
+        This can be used for lightweight memory, reusable rules, project or
+        character context, user preferences, and compact summaries.
+
+        Args:
+            name(string): Short unique entry name, no more than 10 characters.
+            content(string): Entry content to inject when activated.
+            keywords(string): Optional trigger keywords or regex patterns separated by
+                commas, spaces, or new lines. Defaults to name.
+
+        Returns:
+            A plain text result describing whether the entry was added.
+        """
+        name = str(name).strip()
+        content = str(content).strip()
+        keywords = str(keywords or "").strip()
+
+        if not name:
+            return "Worldbook entry add failed: name is required."
+        if len(name) > 10:
+            return (
+                "Worldbook entry add failed: name must be no more than 10 characters."
+            )
+        if not content:
+            return "Worldbook entry add failed: content is required."
+        if self.lorebook.get_entry(name):
+            return f"Worldbook entry add failed: entry already exists: {name}"
+
+        trigger_keywords: list[str] = []
+        raw_keywords = (
+            keywords.replace("\uff0c", ",")
+            .replace("\n", ",")
+            .replace(" ", ",")
+            .split(",")
+        )
+        for keyword in raw_keywords:
+            keyword = keyword.strip()
+            if keyword and keyword not in trigger_keywords:
+                trigger_keywords.append(keyword)
+            if len(trigger_keywords) >= 8:
+                break
+        if not trigger_keywords:
+            trigger_keywords = [name]
+
+        data = {
+            "template": "common",
+            "name": name,
+            "keywords": trigger_keywords,
+            "content": content,
+        }
+
+        try:
+            names = self.lorebook.add_entries([data])
+            if not names:
+                return f"Worldbook entry add failed: entry already exists: {name}"
+            return f"Worldbook entry added: {', '.join(names)}"
+        except Exception as e:
+            logger.error(f"worldbook_add_entry failed: {e}")
+            return f"Worldbook entry add failed: {e}"
+
     @filter.permission_type(PermissionType.ADMIN)
     @filter.command("删除条目")
     async def delete_entry(self, event: AstrMessageEvent):
