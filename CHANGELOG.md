@@ -1,3 +1,7 @@
+## v2.2.8
+
+- 修正数据路径为“data\plugin_data\astrbot_plugin_worldbook”
+
 ## v2.2.7
 
 新增：
