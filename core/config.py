@@ -8,7 +8,7 @@ from typing import Any, Union, get_args, get_origin, get_type_hints
 from astrbot.api import logger
 from astrbot.core.config.astrbot_config import AstrBotConfig
 from astrbot.core.utils.astrbot_path import (
-    get_astrbot_data_path,
+    get_astrbot_plugin_data_path,
     get_astrbot_plugin_path,
     get_astrbot_temp_path,
 )
@@ -119,7 +119,7 @@ class PluginConfig(ConfigNode):
         super().__init__(config)
 
         self.plugin_dir = Path(get_astrbot_plugin_path()) / self._plugin_name
-        self.data_dir = Path(get_astrbot_data_path()) / self._plugin_name
+        self.data_dir = Path(get_astrbot_plugin_data_path()) / self._plugin_name
         self.cache_dir = Path(get_astrbot_temp_path()) / self._plugin_name
 
         self.default_lorefile = self.plugin_dir / "default_lorebook.yaml"
